@@ -27,7 +27,7 @@ app.post("/auth/submit-method", (req, res) => {
           optionalAttributes: ["opt1"],
           serviceProvider: "service-789",
           presentationPolicies: {
-            authenticationTypes: ["CHAVE_MOVEL_DIGITAL", "CARTAO_CIDADAO"],
+            authenticationTypes: ["CMD", "CC", "EIDAS", "PROFESSIONAL"],
             authenticationCMDTypes: ["CMD_TYPE_1"],
           },
         },
@@ -40,6 +40,32 @@ app.post("/auth/submit-method", (req, res) => {
           console.error("Error sending to /api/stream:", err.message)
         );
     } else if (authMethod === "2") {
+      const responseObj = {
+        event: "AUTH_METHOD_SELECTED",
+        created: new Date().toISOString(),
+        response: {
+          sessionId: "session-123",
+          authRequestId: "auth-456",
+          skipConsent: false,
+          skipConfirmation: false,
+          requiredAttributes: ["attr1", "attr2"],
+          authenticatedWithSSO: false,
+          optionalAttributes: ["opt1"],
+          serviceProvider: "service-789",
+          presentationPolicies: {
+            authenticationTypes: ["CC"],
+            authenticationCMDTypes: ["CMD_TYPE_1"],
+          },
+        },
+      };
+      console.log("Sending to /api/stream:", responseObj);
+      axios
+        .post("http://localhost:3000/api/stream", responseObj)
+        .then(() => console.log("Sent to /api/stream:", responseObj))
+        .catch((err) =>
+          console.error("Error sending to /api/stream:", err.message)
+        );
+    } else if (authMethod === "3") {
       const errorObj = {
         event: "ERROR",
         created: "2024-01-15T10:32:00",
