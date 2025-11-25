@@ -1,0 +1,18 @@
+# Node.js
+node_modules/
+pnpm-lock.yaml
+.env
+.DS_Store
+*.log
+
+# VS Code
+.vscode/
+
+# OS generated
+Thumbs.db
+Desktop.ini
+
+# Optional
+coverage/
+dist/
+build/
