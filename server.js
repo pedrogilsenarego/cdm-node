@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/auth/submit-method", (req, res) => {
-  const authMethod = req.body.authMethod;
+  const authMethod = req.body.requestId;
   res.status(200).json({ status: "received" });
 
   setTimeout(() => {
