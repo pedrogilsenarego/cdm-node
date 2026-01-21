@@ -1,0 +1,30 @@
+{
+  "entidadeCredenciadora": "Teste Caso 2 - Nível 1 CMD",
+  "faaaLevel": 1,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": false,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/DataNascimento",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIC",
+      "required": false
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CMD",
+      "visible": true
+    },
+    {
+      "name": "CC",
+      "visible": false
+    }
+  ]
+}

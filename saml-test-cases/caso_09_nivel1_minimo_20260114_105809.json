@@ -1,0 +1,18 @@
+{
+  "entidadeCredenciadora": "Teste Caso 9 - Mínimo Necessário",
+  "faaaLevel": 1,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": false,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CMD",
+      "visible": true
+    }
+  ]
+}

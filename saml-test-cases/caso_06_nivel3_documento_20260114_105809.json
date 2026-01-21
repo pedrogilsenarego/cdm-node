@@ -1,0 +1,42 @@
+{
+  "entidadeCredenciadora": "Teste Caso 6 - Documento e Nacionalidade",
+  "faaaLevel": 3,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": false,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/DocNumber",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/DocType",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/DocNationality",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/Nacionalidade",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/CodigoNacionalidade",
+      "required": false
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CC",
+      "visible": true
+    },
+    {
+      "name": "CMD",
+      "visible": true
+    }
+  ]
+}

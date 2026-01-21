@@ -1,0 +1,30 @@
+{
+  "entidadeCredenciadora": "Teste Caso 5 - Nível 4 Force Authn",
+  "faaaLevel": 4,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": true,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIC",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIF",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NISS",
+      "required": false
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CC",
+      "visible": true
+    }
+  ]
+}

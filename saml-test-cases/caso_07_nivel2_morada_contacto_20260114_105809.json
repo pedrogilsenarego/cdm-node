@@ -1,0 +1,34 @@
+{
+  "entidadeCredenciadora": "Teste Caso 7 - Morada e Contacto",
+  "faaaLevel": 2,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": false,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MoradaCC/MoradaXML",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/CorreioElectronico",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NumeroTelemovel",
+      "required": false
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CMD",
+      "visible": true
+    },
+    {
+      "name": "CC",
+      "visible": true
+    }
+  ]
+}

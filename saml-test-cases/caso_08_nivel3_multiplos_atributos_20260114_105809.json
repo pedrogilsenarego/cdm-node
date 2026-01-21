@@ -1,0 +1,42 @@
+{
+  "entidadeCredenciadora": "Teste Caso 8 - Múltiplos Atributos",
+  "faaaLevel": 3,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": false,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIC",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIF",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NISS",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NSNS",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/DataValidade",
+      "required": false
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CC",
+      "visible": true
+    },
+    {
+      "name": "CMD",
+      "visible": true
+    }
+  ]
+}

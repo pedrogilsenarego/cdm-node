@@ -1,0 +1,42 @@
+{
+  "entidadeCredenciadora": "Teste Caso 4 - Nível 3 CC",
+  "faaaLevel": 3,
+  "returnUri": "https://bo-cmd-facmd.dev.ic.ama.lan/callback",
+  "forceAuthnAGov": false,
+  "requestedAttributes": [
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeCompleto",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeProprio",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NomeApelido",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/DataNascimento",
+      "required": true
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIC",
+      "required": false
+    },
+    {
+      "name": "http://interop.gov.pt/MDC/Cidadao/NIF",
+      "required": false
+    }
+  ],
+  "authTabPresentationPolicies": [
+    {
+      "name": "CC",
+      "visible": true
+    },
+    {
+      "name": "CMD",
+      "visible": false
+    }
+  ]
+}
