@@ -74,30 +74,36 @@ const responses = {
             orderNumber: 2,
             preferential: false,
           },
-          {
-            guid: "eidas-guid",
-            name: "eidas",
-            orderNumber: 3,
-            preferential: false,
-          },
-          {
-            guid: "notaries-guid",
-            name: "notaries",
-            orderNumber: 4,
-            preferential: false,
-          },
-          {
-            guid: "lawyers-guid",
-            name: "lawyers",
-            orderNumber: 5,
-            preferential: false,
-          },
-          {
-            guid: "solicitors-guid",
-            name: "solicitors",
-            orderNumber: 6,
-            preferential: false,
-          },
+          // {
+          //   guid: "eidas-guid",
+          //   name: "eidas",
+          //   orderNumber: 3,
+          //   preferential: false,
+          // },
+          // {
+          //   guid: "notaries-guid",
+          //   name: "notaries",
+          //   orderNumber: 4,
+          //   preferential: false,
+          // },
+          // {
+          //   guid: "lawyers-guid",
+          //   name: "lawyers",
+          //   orderNumber: 5,
+          //   preferential: false,
+          // },
+          // {
+          //   guid: "solicitors-guid",
+          //   name: "solicitors",
+          //   orderNumber: 6,
+          //   preferential: false,
+          // },
+          // {
+          //   guid: "cd-guid",
+          //   name: "cd",
+          //   orderNumber: 7,
+          //   preferential: false,
+          // },
         ],
         authenticationCMDTypes: [
           {
@@ -152,15 +158,9 @@ const responses = {
         authenticationTypes: [
           {
             guid: "cc-guid",
-            name: "Cartão de Cidadão",
+            name: "cc",
             orderNumber: 1,
             preferential: true,
-          },
-          {
-            guid: "eidas-guid",
-            name: "eIDAS",
-            orderNumber: 2,
-            preferential: false,
           },
         ],
         citizenType: "national",
@@ -184,10 +184,10 @@ const responses = {
       presentationPolicies: {
         authenticationTypes: [
           {
-            guid: "cmd-guid",
-            name: "CMD",
+            guid: "lawyers-guid",
+            name: "lawyers",
             orderNumber: 1,
-            preferential: true,
+            preferential: false,
           },
         ],
         citizenType: "national",
