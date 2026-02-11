@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const https = require("https");
+const fs = require("fs/promises");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 8787;
@@ -12,7 +14,7 @@ app.use(express.json());
 async function fetchFromMicrocks(sessionIdType, sessionId, requestId) {
   return new Promise((resolve, reject) => {
     const url = `https://microcks.devops.ama.lan/rest/ID-Gov-PT-SAML-Runtime/1.0.0/saml/auth_session?sessionIdType=${encodeURIComponent(
-      sessionIdType
+      sessionIdType,
     )}`;
 
     const options = {
@@ -39,7 +41,7 @@ async function fetchFromMicrocks(sessionIdType, sessionId, requestId) {
         res.on("end", () => {
           console.log(
             `📥 Raw response (first 200 chars):`,
-            data.substring(0, 200)
+            data.substring(0, 200),
           );
 
           try {
@@ -48,14 +50,14 @@ async function fetchFromMicrocks(sessionIdType, sessionId, requestId) {
           } catch (err) {
             console.error(
               `❌ Failed to parse response:`,
-              data.substring(0, 500)
+              data.substring(0, 500),
             );
             reject(
               new Error(
                 `Failed to parse JSON: ${
                   err.message
-                }. Response was: ${data.substring(0, 100)}`
-              )
+                }. Response was: ${data.substring(0, 100)}`,
+              ),
             );
           }
         });
@@ -280,7 +282,7 @@ app.get("/api/stream", async (req, res) => {
   }
 
   console.log(
-    `🔵 SSE Client connected - SessionId: ${sessionId}, RequestId: ${requestId}, SessionIdType: ${sessionIdType}`
+    `🔵 SSE Client connected - SessionId: ${sessionId}, RequestId: ${requestId}, SessionIdType: ${sessionIdType}`,
   );
 
   res.setHeader("Content-Type", "text/event-stream");
@@ -294,7 +296,7 @@ app.get("/api/stream", async (req, res) => {
     const microcksResponse = await fetchFromMicrocks(
       sessionIdType,
       sessionId,
-      requestId
+      requestId,
     );
 
     // Microcks already returns the full structure with event, created, and response
@@ -325,6 +327,36 @@ app.get("/api/stream", async (req, res) => {
     console.log(`🔴 SSE Client disconnected - SessionId: ${sessionId}`);
     res.end();
   });
+});
+
+app.get("/saml/attributes", async (_req, res) => {
+  const casesDir = path.join(__dirname, "saml-test-cases");
+
+  try {
+    const files = await fs.readdir(casesDir);
+    const jsonFiles = files
+      .filter((file) => file.toLowerCase().endsWith(".json"))
+      .sort();
+
+    const cases = await Promise.all(
+      jsonFiles.map(async (file) => {
+        const filePath = path.join(casesDir, file);
+        const raw = await fs.readFile(filePath, "utf8");
+
+        try {
+          return { file, data: JSON.parse(raw) };
+        } catch (err) {
+          return { file, error: `Failed to parse JSON: ${err.message}` };
+        }
+      }),
+    );
+
+    res.json({ count: cases.length, cases });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Failed to load SAML test cases", details: err.message });
+  }
 });
 
 app.listen(PORT, () => {
