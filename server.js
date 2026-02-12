@@ -69,199 +69,63 @@ async function fetchFromMicrocks(sessionIdType, sessionId, requestId) {
   });
 }
 
-// Response objects based on sessionId
-const responses = {
-  1: {
-    event: "SESSION_DATA",
-    created: new Date().toISOString(),
-    response: {
-      sessionId: "session-id-123",
-      authRequestID: "req-id-123",
-      serviceProvider: "Portal de Teste",
-      dependentAuthentication: true,
-      dependentAuthenticationAttributes: {
-        citizenType: "national",
-        identifierAttributes: [
-          {
-            guid: "attribute-guid-identifier-1",
-            name: "attribute-identifier-1",
-            value: "1234567 Z89",
-          },
-        ],
-        requestedAttributes: [
-          {
-            guid: "attribute-guid-requested-1",
-            name: "attribute-requested-1",
-            optional: false,
-          },
-          {
-            guid: "attribute-guid-requested-2",
-            name: "attribute-requested-2",
-            optional: false,
-          },
-          {
-            guid: "attribute-guid-requested-3",
-            name: "attribute-requested-3",
-            optional: false,
-          },
-        ],
+async function fetchSamlAttributes(authMethodGuid, sessionId, requestId) {
+  return new Promise((resolve, reject) => {
+    const url = `https://microcks.devops.ama.lan/rest/ID-Gov-PT-SAML-Runtime/1.0.0/saml/attributes?authMethodGuid=${encodeURIComponent(
+      authMethodGuid,
+    )}`;
+
+    const options = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        SessionId: sessionId,
+        "X-RequestID": requestId,
       },
-      attributes: [
-        { guid: "attribute-guid-1", name: "attribute-1", optional: false },
-        { guid: "attribute-guid-2", name: "attribute-2", optional: false },
-        {
-          guid: "attribute-guid-3",
-          name: "attribute-3",
-          optional: true,
-          preSelected: true,
-        },
-        {
-          guid: "attribute-guid-4",
-          name: "attribute-4",
-          optional: true,
-          preSelected: true,
-        },
-      ],
-      presentationPolicies: {
-        authenticationTypes: [
-          {
-            guid: "cmd-guid",
-            name: "cmd",
-            orderNumber: 1,
-            preferential: true,
-          },
-          {
-            guid: "cc-guid",
-            name: "cc",
-            orderNumber: 2,
-            preferential: false,
-          },
-          // {
-          //   guid: "eidas-guid",
-          //   name: "eidas",
-          //   orderNumber: 3,
-          //   preferential: false,
-          // },
-          // {
-          //   guid: "notaries-guid",
-          //   name: "notaries",
-          //   orderNumber: 4,
-          //   preferential: false,
-          // },
-          // {
-          //   guid: "lawyers-guid",
-          //   name: "lawyers",
-          //   orderNumber: 5,
-          //   preferential: false,
-          // },
-          // {
-          //   guid: "solicitors-guid",
-          //   name: "solicitors",
-          //   orderNumber: 6,
-          //   preferential: false,
-          // },
-          // {
-          //   guid: "cd-guid",
-          //   name: "cd",
-          //   orderNumber: 7,
-          //   preferential: false,
-          // },
-        ],
-        authenticationCMDTypes: [
-          {
-            guid: "app-guid",
-            name: "app",
-            orderNumber: 1,
-            preferential: false,
-          },
-          {
-            guid: "phone-guid",
-            name: "phone",
-            orderNumber: 2,
-            preferential: false,
-          },
-          {
-            guid: "email-guid",
-            name: "email",
-            orderNumber: 3,
-            preferential: false,
-          },
-          {
-            guid: "qrcode-guid",
-            name: "qr-code",
-            orderNumber: 4,
-            preferential: false,
-          },
-        ],
-        citizenType: "national",
-      },
-      skipConsent: false,
-      skipConfirmation: false,
-      authenticatedWithSSO: false,
-      acceptedNewTermsAndConditions: false,
-      forceAuthentication: false,
-    },
-  },
-  2: {
-    event: "SESSION_DATA",
-    created: new Date().toISOString(),
-    response: {
-      sessionId: "session-id-456",
-      authRequestID: "req-id-456",
-      serviceProvider: "Portal CC",
-      dependentAuthentication: false,
-      attributes: [
-        { guid: "attr-cc-1", name: "NomeCompleto", optional: false },
-        { guid: "attr-cc-2", name: "DataNascimento", optional: false },
-        { guid: "attr-cc-3", name: "NIC", optional: true, preSelected: false },
-        { guid: "attr-cc-4", name: "NIF", optional: true, preSelected: false },
-      ],
-      presentationPolicies: {
-        authenticationTypes: [
-          {
-            guid: "cc-guid",
-            name: "cc",
-            orderNumber: 1,
-            preferential: true,
-          },
-        ],
-        citizenType: "national",
-      },
-      skipConsent: false,
-      skipConfirmation: false,
-      authenticatedWithSSO: false,
-      acceptedNewTermsAndConditions: false,
-      forceAuthentication: false,
-    },
-  },
-  3: {
-    event: "SESSION_DATA",
-    created: new Date().toISOString(),
-    response: {
-      sessionId: "session-id-789",
-      authRequestID: "req-id-789",
-      serviceProvider: "Portal Simples",
-      dependentAuthentication: false,
-      attributes: [],
-      presentationPolicies: {
-        authenticationTypes: [
-          {
-            guid: "lawyers-guid",
-            name: "lawyers",
-            orderNumber: 1,
-            preferential: false,
-          },
-        ],
-        citizenType: "national",
-      },
-      skipConsent: true,
-      skipConfirmation: true,
-      authenticatedWithSSO: true,
-      acceptedNewTermsAndConditions: false,
-      forceAuthentication: false,
-    },
-  },
-};
+      rejectUnauthorized: false, // Equivalent to --insecure
+    };
+
+    https
+      .get(url, options, (res) => {
+        let data = "";
+
+        console.log(`📥 Attributes status: ${res.statusCode}`);
+        console.log(`📥 Attributes headers:`, res.headers);
+
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+
+        res.on("end", () => {
+          console.log(
+            `📥 Attributes raw (first 200 chars):`,
+            data.substring(0, 200),
+          );
+
+          try {
+            const jsonData = JSON.parse(data);
+            resolve(jsonData);
+          } catch (err) {
+            console.error(
+              `❌ Failed to parse attributes response:`,
+              data.substring(0, 500),
+            );
+            reject(
+              new Error(
+                `Failed to parse JSON: ${
+                  err.message
+                }. Response was: ${data.substring(0, 100)}`,
+              ),
+            );
+          }
+        });
+      })
+      .on("error", (err) => {
+        console.error(`❌ HTTPS request error:`, err);
+        reject(err);
+      });
+  });
+}
 
 // SSE endpoint - receives X-RequestID and SessionId headers, fetches from Microcks
 app.get("/api/stream", async (req, res) => {
@@ -329,33 +193,27 @@ app.get("/api/stream", async (req, res) => {
   });
 });
 
-app.get("/saml/attributes", async (_req, res) => {
-  const casesDir = path.join(__dirname, "saml-test-cases");
+app.get("/saml/attributes", async (req, res) => {
+  const authMethodGuid = req.query.authMethodGuid;
+  const sessionId = req.headers.sessionid || req.query.sessionId;
+  const requestId = req.headers["x-requestid"] || req.query.requestId;
+
+  if (!authMethodGuid) {
+    res.status(400).json({ error: "authMethodGuid is required" });
+    return;
+  }
 
   try {
-    const files = await fs.readdir(casesDir);
-    const jsonFiles = files
-      .filter((file) => file.toLowerCase().endsWith(".json"))
-      .sort();
-
-    const cases = await Promise.all(
-      jsonFiles.map(async (file) => {
-        const filePath = path.join(casesDir, file);
-        const raw = await fs.readFile(filePath, "utf8");
-
-        try {
-          return { file, data: JSON.parse(raw) };
-        } catch (err) {
-          return { file, error: `Failed to parse JSON: ${err.message}` };
-        }
-      }),
+    const microcksResponse = await fetchSamlAttributes(
+      authMethodGuid,
+      sessionId,
+      requestId,
     );
-
-    res.json({ count: cases.length, cases });
+    res.json(microcksResponse);
   } catch (err) {
     res
-      .status(500)
-      .json({ error: "Failed to load SAML test cases", details: err.message });
+      .status(502)
+      .json({ error: "Failed to fetch attributes", details: err.message });
   }
 });
 
