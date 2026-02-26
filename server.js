@@ -127,6 +127,70 @@ async function fetchSamlAttributes(authMethodGuid, sessionId, requestId) {
   });
 }
 
+async function postSamlLoginCmd(payload, sessionId, requestId) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(payload || {});
+
+    const options = {
+      hostname: "microcks.devops.ama.lan",
+      port: 443,
+      path: "/rest/ID-Gov-PT-SAML-Runtime/1.0.0/saml/login/cmd",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
+        SessionId: sessionId,
+        "X-RequestID": requestId,
+      },
+      rejectUnauthorized: false, // Equivalent to --insecure
+    };
+
+    const request = https.request(options, (res) => {
+      let data = "";
+
+      console.log(`📥 Login CMD status: ${res.statusCode}`);
+      console.log(`📥 Login CMD headers:`, res.headers);
+
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      res.on("end", () => {
+        console.log(
+          `📥 Login CMD raw (first 200 chars):`,
+          data.substring(0, 200),
+        );
+
+        try {
+          const jsonData = JSON.parse(data);
+          resolve(jsonData);
+        } catch (err) {
+          console.error(
+            `❌ Failed to parse login CMD response:`,
+            data.substring(0, 500),
+          );
+          reject(
+            new Error(
+              `Failed to parse JSON: ${
+                err.message
+              }. Response was: ${data.substring(0, 100)}`,
+            ),
+          );
+        }
+      });
+    });
+
+    request.on("error", (err) => {
+      console.error(`❌ HTTPS request error:`, err);
+      reject(err);
+    });
+
+    request.write(body);
+    request.end();
+  });
+}
+
 // SSE endpoint - receives X-RequestID and SessionId headers, fetches from Microcks
 app.get("/api/stream", async (req, res) => {
   const sessionId = req.headers.sessionid || req.query.sessionId;
@@ -214,6 +278,25 @@ app.get("/saml/attributes", async (req, res) => {
     res
       .status(502)
       .json({ error: "Failed to fetch attributes", details: err.message });
+  }
+});
+
+app.post("/saml/login/cmd", async (req, res) => {
+  const sessionId = req.headers.sessionid || req.query.sessionId;
+  const requestId = req.headers["x-requestid"] || req.query.requestId;
+
+  try {
+    const microcksResponse = await postSamlLoginCmd(
+      req.body,
+      sessionId,
+      requestId,
+    );
+    res.json(microcksResponse);
+  } catch (err) {
+    res.status(502).json({
+      error: "Failed to execute CMD login",
+      details: err.message,
+    });
   }
 });
 
