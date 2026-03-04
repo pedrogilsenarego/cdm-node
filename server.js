@@ -253,6 +253,83 @@ async function fetchSamlSupportAuth(
   });
 }
 
+async function fetchSamlQrCode(sessionId, requestId, apiKey, contentType) {
+  return new Promise((resolve, reject) => {
+    const url =
+      "https://microcks.devops.ama.lan/rest/ID-Gov-PT-SAML-Runtime/1.0.0/saml/qrcode";
+
+    const options = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": contentType || "application/json",
+        ...(sessionId ? { SessionId: sessionId } : {}),
+        ...(requestId ? { "X-RequestID": requestId } : {}),
+        ...(apiKey ? { "X-API-KEY": apiKey } : {}),
+      },
+      rejectUnauthorized: false, // Equivalent to --insecure
+    };
+
+    https
+      .get(url, options, (res) => {
+        let data = "";
+
+        console.log(`📥 QR code status: ${res.statusCode}`);
+        console.log(`📥 QR code headers:`, res.headers);
+
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+
+        res.on("end", () => {
+          console.log(
+            `📥 QR code raw (first 200 chars):`,
+            data.substring(0, 200),
+          );
+
+          if (!data || data.trim().length === 0) {
+            resolve({});
+            return;
+          }
+
+          const statusCode = res.statusCode || 500;
+
+          try {
+            const jsonData = JSON.parse(data);
+            if (statusCode >= 400) {
+              reject(
+                new Error(
+                  `QR code upstream error (${statusCode}): ${data.substring(0, 200)}`,
+                ),
+              );
+              return;
+            }
+            resolve(jsonData);
+          } catch (err) {
+            if (statusCode >= 400) {
+              reject(
+                new Error(
+                  `QR code upstream error (${statusCode}): ${data.substring(0, 200)}`,
+                ),
+              );
+              return;
+            }
+
+            reject(
+              new Error(
+                `Failed to parse JSON: ${err.message}. Response was: ${data.substring(0, 100)}`,
+              ),
+            );
+          }
+        });
+      })
+      .on("error", (err) => {
+        console.error(`❌ HTTPS request error:`, err);
+        reject(err);
+      });
+  });
+}
+
 function buildDispatchHints(rawDispatchHints = {}) {
   return {
     microcksLabels: rawDispatchHints.microcksLabels,
@@ -469,6 +546,33 @@ app.get("/saml/support-auth", async (req, res) => {
   } catch (err) {
     res.status(502).json({
       error: "Failed to fetch support auth",
+      details: err.message,
+    });
+  }
+});
+
+app.get("/saml/qrcode", async (req, res) => {
+  const sessionId = req.headers.sessionid;
+  const requestId = req.headers["x-requestid"];
+  const apiKey = req.headers["x-api-key"];
+  const contentType = req.headers["content-type"];
+
+  if (!apiKey) {
+    res.status(400).json({ error: "x-api-key header is required" });
+    return;
+  }
+
+  try {
+    const microcksResponse = await fetchSamlQrCode(
+      sessionId,
+      requestId,
+      apiKey,
+      contentType,
+    );
+    res.json(microcksResponse);
+  } catch (err) {
+    res.status(502).json({
+      error: "Failed to fetch QR code",
       details: err.message,
     });
   }
