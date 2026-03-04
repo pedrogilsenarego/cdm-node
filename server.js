@@ -128,7 +128,12 @@ async function fetchSamlAttributes(authMethodGuid, sessionId, requestId) {
   });
 }
 
-async function fetchSamlSupportAuth(sessionId, requestId, apiKey, dispatchHints = {}) {
+async function fetchSamlSupportAuth(
+  sessionId,
+  requestId,
+  apiKey,
+  dispatchHints = {},
+) {
   return new Promise((resolve, reject) => {
     const baseUrl =
       "https://microcks.devops.ama.lan/rest/ID-Gov-PT-SAML-Runtime/1.0.0/saml/support-auth";
@@ -209,8 +214,7 @@ async function fetchSamlSupportAuth(sessionId, requestId, apiKey, dispatchHints 
             if (statusCode >= 400) {
               console.error("❌ support-auth upstream non-2xx response", {
                 statusCode,
-                hint:
-                  "Check X-API-KEY, Content-Type, x-microcks-labels, and URI params used by Microcks dispatcher",
+                hint: "Check X-API-KEY, Content-Type, x-microcks-labels, and URI params used by Microcks dispatcher",
               });
               reject(
                 new Error(
@@ -224,8 +228,7 @@ async function fetchSamlSupportAuth(sessionId, requestId, apiKey, dispatchHints 
             if (statusCode >= 400) {
               console.error("❌ support-auth upstream non-JSON error body", {
                 statusCode,
-                hint:
-                  "Likely Microcks dispatch mismatch. Verify expected URI params/labels for an existing mock response.",
+                hint: "Likely Microcks dispatch mismatch. Verify expected URI params/labels for an existing mock response.",
               });
               reject(
                 new Error(
